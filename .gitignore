@@ -6,3 +6,4 @@ package.json
 
 dist/
 build/
+/generated/prisma

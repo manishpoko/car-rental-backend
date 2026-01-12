@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model User {
+  id Int   @id @unique @default(autoincrement()) //the unique primary key here is a number
+  username String 
+  password String @unique
+  created_at DateTime @default(now())
+  bookings Booking[] //stating that it has somem properties related to another model too
+
+}
+
+model Booking {
+  id String @id @unique @default(cuid()) //the unique primary key here is a string
+  user User @relation(fields: [user_id], references: [id]) //declares that user_id has its property derived from 'id' in User model
+
+  user_id Int  //now we declarae that user_id as unique for bookings
+  car_name String
+  days Int
+  rent_per_day Int
+  status Status
+  created_at DateTime @default(now())
+}
+
+enum Status {
+  BOOKED
+  COMPLETED
+  CANCELLED
+}
