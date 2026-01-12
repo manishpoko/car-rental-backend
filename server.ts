@@ -1,18 +1,28 @@
-import express from "express"
+import express from "express";
+
+
+import loginRoute from './src/routes/loginRoute.js'
 
 const app = express()
+const PORT = 3000;
 
 app.use(express.json());
 
-app.get("/health", (req, res) => {
+app.use('/login', loginRoute)
+
+
+app.get("/", (req, res) => {
+    console.log("this is for terminal")
     res.send("hi there")
 } )
 
-const PORT = 3000;
 
-app.listen('PORT', ()=> {
-    console.log(`hello from port ${PORT}`)
+
+app.listen(PORT, ()=> {
+    console.log(`listenin' from p-${PORT}`)
 })
+
+
 
 export default app;
 
