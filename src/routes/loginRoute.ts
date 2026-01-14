@@ -1,11 +1,10 @@
-import { Router } from 'express';
+import  { Router } from "express";
 
 const router = Router();
 
-router.get('/', (req, res) => {
-    console.log('hello from router')
-    res.send("success w login")
 
+router.get('/', (req, res)=> {
+    res.send(`hi from router`)
 })
 
-export default router;
+export default router

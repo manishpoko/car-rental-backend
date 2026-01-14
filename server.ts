@@ -1,28 +1,25 @@
-import express from "express";
-
-
-import loginRoute from './src/routes/loginRoute.js'
+import express from "express"
 
 const app = express()
-const PORT = 3000;
 
-app.use(express.json());
+app.use(express.json())
+import LoginRoute from './src/routes/LoginRoute'
+import SignupRoute from './src/routes/SignupRoute'
 
-app.use('/login', loginRoute)
-
-
-app.get("/", (req, res) => {
-    console.log("this is for terminal")
-    res.send("hi there")
-} )
+app.use('/login', LoginRoute)
+app.use('/signup', SignupRoute)
 
 
+const PORT = 3000
 
-app.listen(PORT, ()=> {
-    console.log(`listenin' from p-${PORT}`)
+app.get('/', (req, res) => {
+    const a = 0;
+    console.log("this is a refresh" )
+    res.send(`server started at ${PORT}`)
 })
 
-
+app.listen(PORT, ()=> {
+    console.log(`listening from ${PORT}`)
+})
 
 export default app;
-
