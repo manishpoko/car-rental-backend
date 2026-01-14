@@ -31,6 +31,11 @@
     "nodemon": "^3.1.11",
     "pg": "^8.16.3"
   },
-    "include": ["src/**/*"], 
-  "exclude": ["node_modules", "prisma.config.ts"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "prisma.config.ts"
+  ]
 }

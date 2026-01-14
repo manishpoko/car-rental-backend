@@ -3,12 +3,11 @@ import express from "express"
 const app = express()
 
 app.use(express.json())
-import LoginRoute from './src/routes/LoginRoute'
-import SignupRoute from './src/routes/SignupRoute'
+import LoginRoute from './src/routes/LoginRoute.ts'
+import SignupRoute from './src/routes/SignupRoute.ts'
 
 app.use('/login', LoginRoute)
 app.use('/signup', SignupRoute)
-
 
 const PORT = 3000
 
@@ -23,3 +22,4 @@ app.listen(PORT, ()=> {
 })
 
 export default app;
+
