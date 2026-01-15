@@ -16,7 +16,7 @@ datasource db {
 
 model User {
   id Int   @id @unique @default(autoincrement()) //the unique primary key here is a number
-  username String 
+  username String  @unique
   password String @unique
   created_at DateTime @default(now())
   bookings Booking[] //stating that it has somem properties related to another model too

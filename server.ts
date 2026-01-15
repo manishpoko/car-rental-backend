@@ -3,8 +3,8 @@ import express from "express"
 const app = express()
 
 app.use(express.json())
-import LoginRoute from './src/routes/LoginRoute.ts'
-import SignupRoute from './src/routes/SignupRoute.ts'
+import LoginRoute from './src/routes/authRoutes.ts'
+import SignupRoute from './src/routes/bookingRoutes.ts'
 
 app.use('/login', LoginRoute)
 app.use('/signup', SignupRoute)
