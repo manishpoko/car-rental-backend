@@ -6,8 +6,8 @@ app.use(express.json())
 import LoginRoute from './src/routes/authRoutes.ts'
 import SignupRoute from './src/routes/bookingRoutes.ts'
 
-app.use('/login', LoginRoute)
-app.use('/signup', SignupRoute)
+app.use('/auth/login', LoginRoute)
+app.use('/auth/signup', SignupRoute)
 
 const PORT = 3000
 

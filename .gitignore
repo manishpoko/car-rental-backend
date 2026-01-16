@@ -6,4 +6,5 @@ package.json
 
 dist/
 build/
-/generated/prisma
+src/generated/prisma
+dummy.txt
