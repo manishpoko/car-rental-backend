@@ -1,3 +1,5 @@
+//only work of this is authorisation - ensure that after logging in, every request that the client/sender sends to the server is an allowed one, which is guaranteed by the jwt token attached to it using this middleware
+
 
 // authmw code - 
 import jwt from 'jsonwebtoken'

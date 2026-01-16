@@ -16,8 +16,8 @@ datasource db {
 
 model User {
   id Int   @id @default(autoincrement()) //the unique primary key here is a number
-  username String  
-  password String @unique
+  username String  @unique
+  password String 
   created_at DateTime @default(now())
   bookings Booking[] //stating that it has somem properties related to another model too
 
@@ -28,9 +28,9 @@ model Booking {
   user User @relation(fields: [user_id], references: [id]) //declares that user_id has its property derived from 'id' in User model
 
   user_id Int  //this shouldnt be unique because one user_id can have many bookings
-  car_name String
-  days Int
-  rent_per_day Int
+  car_name String //comes from the user(body)
+  days Int //comses from the user(body)
+  rent_per_day Int //comes from the user(body)
   status Status @default(booked) //status-booked by default
   created_at DateTime @default(now())
 }
