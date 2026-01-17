@@ -1,5 +1,6 @@
 //logic for bookings - eg create booking update/delete booking, show all bookings etc
 
+//to create a new booking:
 // get the details from req.body and req.user
 // check if all items are present
 // check for limits of rent and days
@@ -43,7 +44,8 @@ export async function createBooking(req: AuthenticatedRequest, res: Response) {
 
     //if all checks are satisfied, proceed to create the booking
     const newBooking = await prisma.booking.create({
-      data: {
+      data: { 
+        //while assigning key-value pairs, the db-schema name will be key, and the input variables (req.body or req.user) will be assigned as value like this-
         user_id: userId,
         car_name: carName,
         rent_per_day: rentPerDay,
@@ -68,7 +70,9 @@ export async function createBooking(req: AuthenticatedRequest, res: Response) {
   }
 }
 
-//get booking -
+////////////////////////////////////////////////////
+
+//get bookings -
 export async function getBookings(req: AuthenticatedRequest, res: Response) {
   try {
     if (!req.user) {
@@ -97,7 +101,7 @@ export async function getBookings(req: AuthenticatedRequest, res: Response) {
       const bookings = await prisma.booking.findMany({
         where: {
           user_id: userId, //grabbing user id here because we need full summary of the user
-          status: {
+          status: { //check if any of these two status present
             in: ["booked", "completed"],
           },
         },
@@ -119,10 +123,10 @@ export async function getBookings(req: AuthenticatedRequest, res: Response) {
         },
       });
     } else if (bookingId) {
-      //details of that one specific booking done by the user
+      //getting that one single specific booking done by the user
       const booking = await prisma.booking.findUnique({
         where: {
-          id: bookingIdNumber, //grabbing booking id because we only need this one booking detail of the user
+          id: bookingIdNumber, //grabbing bookingId and assigning it to the id inside booking schema
         },
       });
 
@@ -142,7 +146,7 @@ export async function getBookings(req: AuthenticatedRequest, res: Response) {
         success: true,
         data: [
           {
-            //getting all existing booking elements and then adding on top the total -
+            //getting all existing booking elements and then adding on top the total for that one booking -
             ...booking,
             totalCost: booking.days * booking.rent_per_day,
           },
@@ -174,3 +178,5 @@ export async function getBookings(req: AuthenticatedRequest, res: Response) {
     });
   }
 }
+
+
