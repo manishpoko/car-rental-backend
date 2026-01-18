@@ -44,7 +44,7 @@ export async function createBooking(req: AuthenticatedRequest, res: Response) {
 
     //if all checks are satisfied, proceed to create the booking
     const newBooking = await prisma.booking.create({
-      data: { 
+      data: {
         //while assigning key-value pairs, the db-schema name will be key, and the input variables (req.body or req.user) will be assigned as value like this-
         user_id: userId,
         car_name: carName,
@@ -101,7 +101,8 @@ export async function getBookings(req: AuthenticatedRequest, res: Response) {
       const bookings = await prisma.booking.findMany({
         where: {
           user_id: userId, //grabbing user id here because we need full summary of the user
-          status: { //check if any of these two status present
+          status: {
+            //check if any of these two status present
             in: ["booked", "completed"],
           },
         },
@@ -110,7 +111,7 @@ export async function getBookings(req: AuthenticatedRequest, res: Response) {
       const totalBookings = bookings.length;
       const totalAmountSpent = bookings.reduce(
         (sum, booking) => sum + booking.days * booking.rent_per_day,
-        0 //reduce is inbuilt js fn that takes sum (initially 0), and then adds it to current daysXrent, which becomes the sum for the next iteration and so on
+        0, //reduce is inbuilt js fn that takes sum (initially 0), and then adds it to current daysXrent, which becomes the sum for the next iteration and so on
       );
 
       return res.status(200).json({
@@ -179,4 +180,111 @@ export async function getBookings(req: AuthenticatedRequest, res: Response) {
   }
 }
 
+export async function updateBooking(req: AuthenticatedRequest, res: Response) {
+  try {
+    //check auth safety and user-
+    if (!req.user) {
+      return res.status(400).json({
+        success: false,
+        error: "unauthorized",
+      });
+    }
+    //take userId from jwt middleware
+    const userId = req.user.userId;
 
+    //take bookingId from client url input
+    const bookingId = Number(req.params.bookingId);
+
+    //validate bookingId-
+    if (isNaN(bookingId)) {
+      return res.status(400).json({
+        success: false,
+        error: "invalid user",
+      });
+    }
+
+    //fetch the booking
+    const booking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+    });
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        error: "booking not found",
+      });
+    }
+
+    //checking ownership-
+    if (booking.user_id !== userId) {
+      return res.status(400).json({
+        success: false,
+        error: "booking does not belong to user",
+      });
+    }
+
+    //decide update items a/t assignment conditions
+    const { carName, days, rentPerDay, status } = req.body;
+
+    //either update the status, or the remaining items from above, not both
+
+    //--updating status
+    if (status) {
+      if (!["booked", "completed", "cancelled"].includes(status)) {
+        //if status doesnt belong to any of these three
+        return res.status(400).json({
+          error: "invalid status",
+          success: false,
+        });
+      }
+
+      const updatedBooking = await prisma.booking.update({
+        where: {
+          id: bookingId,
+        },
+        data: { status },
+      });
+
+      return res.status(200).json({
+        sucess: true,
+        data: {
+          message: "booking status updated successfully",
+          booking: {
+            ...updatedBooking,
+            totalCost: updatedBooking.rent_per_day * updatedBooking.days,
+          },
+        },
+      });
+    }
+
+    //if not status, update other details -
+    if (!carName || !rentPerDay || !days) {
+      return res.status(400).json({
+        success: false,
+        error: "invalid inputs",
+      });
+    }
+
+    const updatedBooking = await prisma.booking.update({
+      where: { id: bookingId },
+      data: {
+        rent_per_day: rentPerDay,
+        days,
+        car_name: carName,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "detail updated!",
+      booking: {
+        ...updateBooking,
+        totalCost: updatedBooking.days * updatedBooking.rent_per_day,
+      },
+    });
+  } catch {
+    return res.status(500).json({
+      success: false,
+      error: "sommething went wrong",
+    });
+  }
+}
