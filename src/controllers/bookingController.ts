@@ -180,6 +180,7 @@ export async function getBookings(req: AuthenticatedRequest, res: Response) {
   }
 }
 
+//update booking
 export async function updateBooking(req: AuthenticatedRequest, res: Response) {
   try {
     //check auth safety and user-
@@ -285,6 +286,67 @@ export async function updateBooking(req: AuthenticatedRequest, res: Response) {
     return res.status(500).json({
       success: false,
       error: "sommething went wrong",
+    });
+  }
+}
+
+export async function deleteBooking(req: AuthenticatedRequest, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        error: "unauthorized",
+        success: false,
+      });
+    }
+
+    const userId = req.user.userId;
+    const bookingId = Number(req.params.bookingId);
+    //if nan booingid
+
+    if (isNaN(bookingId)) {
+      return res.status(400).json({
+        success: false,
+        error: "invalid booking id",
+      });
+    }
+
+    const booking = await prisma.booking.findUnique({
+      where: {
+        id: bookingId,
+      },
+    });
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        error: "booking doesnt exist",
+      });
+    }
+
+    if (booking.user_id !== userId) {
+      return res.status(403).json({
+        success: false,
+        error: "forbidden",
+      });
+    }
+
+    //fetch booking
+
+    const deletedBooking = await prisma.booking.delete({
+      where: {
+        id: bookingId,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        message: "Booking deleted successfully",
+      },
+    });
+  } catch {
+    res.status(500).json({
+      success: false,
+      error: "something went wrong",
     });
   }
 }
